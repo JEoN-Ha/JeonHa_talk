@@ -16,10 +16,8 @@ namespace JeonHa_talk
 
     class UDP_Socket
     {
-        Socket cli_socket;
         Socket mutual_udp_socket;
         IPEndPoint receive_EP;
-        IPEndPoint cli_EP;
         Target_info mutual_target_info;
         EndPoint send_Endpoint;
         int openPort;

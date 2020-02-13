@@ -14,8 +14,7 @@ using System.Net.Sockets;
 
 namespace UDPChatServer
 {
-
-
+   
     public partial class UDPChatServer : Form
     {
         Socket socket;
@@ -43,9 +42,11 @@ namespace UDPChatServer
         {
 
             socket.Bind(endPoint);
+
             rBuffer = new byte[1024];
 
             EndPoint remoteEndpoint = new IPEndPoint(IPAddress.Any, 0);
+            
             socket.BeginReceiveFrom(
                 rBuffer,
                 0,
@@ -55,29 +56,59 @@ namespace UDPChatServer
                 new AsyncCallback(server_recvFrom),
                 socket);
 
-            socket.SendTo(rBuffer, endPoint);
-
 
         }
+
         public void server_recvFrom(IAsyncResult Result)
         {
             EndPoint remoteEndpoint = new IPEndPoint(IPAddress.Any, 0);
+
             int datalen = socket.EndReceiveFrom(Result, ref remoteEndpoint);
+
+            socket.SendTo(rBuffer, remoteEndpoint);
+
+            this.Invoke(new MethodInvoker(
+                delegate ()
+                {
+                    string result = Encoding.UTF8.GetString(rBuffer);
+                    server_window.Text = server_window.Text + "\n" + result;
+                }
+                ));
+
+            socket.BeginReceiveFrom(
+                rBuffer,
+                0,
+                rBuffer.Length,
+                SocketFlags.None,
+                ref remoteEndpoint,
+                new AsyncCallback(server_recvFrom),
+                socket);
+
+ 
+
+        }
+
+        /*
+        public void server_sendTo(IAsyncResult Result)
+        {
+            EndPoint remoteEndpoint = new IPEndPoint(IPAddress.Any, 0);
+            int datalen = socket.EndSendTo(Result);
 
             string result = Encoding.UTF8.GetString(rBuffer);
             server_window.Text = server_window.Text + "\n" + result;
 
-            socket.BeginReceiveFrom(
+            socket.BeginSendTo(
                 rBuffer,
                 0,
                 rBuffer.Length,
                 SocketFlags.None,
-                ref remoteEndpoint,
+                remoteEndpoint,
                 new AsyncCallback(server_recvFrom),
                 socket);
 
-
+            Console.WriteLine("client에게 전송");
         }
+        */
     }
 }
          

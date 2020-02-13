@@ -10,10 +10,12 @@ using System.Windows.Forms;
 using System.Net;
 using System.Net.Sockets;
 
+
 namespace JeonHa_talk
 {
     public partial class JeonHa_talk : Form
     {
+        int recv = 0;
         string strIP;
         int port;
         Socket socket;
@@ -21,14 +23,16 @@ namespace JeonHa_talk
         IPEndPoint endPoint;
         byte[] rBuffer;
 
+
         public JeonHa_talk()
         {
             InitializeComponent();
-            strIP = "127.0.0.1";
-            port = 8000;
 
             //UDP Socket 생성
             socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+
+            port = 8000;
+            strIP = "127.0.0.1";
 
             //종점 생성
             ip = IPAddress.Parse(strIP);
@@ -43,20 +47,36 @@ namespace JeonHa_talk
 
         private void text_input_KeyDown(object sender, KeyEventArgs e)
         {
+            string msg = text_input.Text;
+
+            byte[] sBuffer = Encoding.UTF8.GetBytes(msg);
+            EndPoint remoteEndpoint = new IPEndPoint(IPAddress.Any, 0);
+
             // 수-필 시작
             if (e.Shift && e.KeyCode == Keys.Enter)
             {
-                text_input.Text = text_input.Text + "\n";
-                text_input.SelectionStart = text_input.Text.Length;
+                //  text_input.Text = text_input.Text + "\n";
+                //text_input.SelectionStart = text_input.Text.Length;
 
+
+                socket.SendTo(sBuffer, endPoint);//접속(Connect)를 안할거면 일케 SendTo로 할수 있다.
+
+                text_input.Clear();
+
+                socket.BeginReceiveFrom(
+                rBuffer,
+                0,
+                rBuffer.Length,
+                SocketFlags.None,
+                ref remoteEndpoint,
+                new AsyncCallback(client_recvFrom),
+                   socket);
             }
             else if (e.KeyCode == Keys.Enter)
             {
-                text_window.Text = text_window.Text + "\n" + text_input.Text;
+                //text_window.Text = text_window.Text + "\n" + text_input.Text;
                 
-                string msg = text_input.Text;
 
-                byte[] sBuffer = Encoding.UTF8.GetBytes(msg);
 
                 //보내기
                 //socket.Send(sBuffer, 0, sBuffer.Length, SocketFlags.None);
@@ -64,6 +84,18 @@ namespace JeonHa_talk
 
                 text_input.Clear();
 
+                rBuffer = new byte[1024];
+              
+                socket.BeginReceiveFrom(
+                 rBuffer,
+                 0,
+                 rBuffer.Length,
+                 SocketFlags.None,
+                 ref remoteEndpoint,
+                 new AsyncCallback(client_recvFrom),
+                    socket);
+               
+                
             }
             // 수-필 끝
         }
@@ -84,28 +116,29 @@ namespace JeonHa_talk
         private void button_connect_Click(object sender, EventArgs e)
         {
             //바인드
-            socket.Connect(endPoint);
 
-            rBuffer = new byte[1024];
+            UDPClientDlg dlg = new UDPClientDlg();
+            port = dlg.port;
+            strIP = dlg.strIP;
+            dlg.ShowDialog();
 
-            EndPoint remoteEndpoint = new IPEndPoint(IPAddress.Any, 0);
-            socket.BeginReceiveFrom(
-                rBuffer,
-                0,
-                rBuffer.Length,
-                SocketFlags.None,
-                ref remoteEndpoint,
-                new AsyncCallback(client_recvFrom),
-                socket);
+         
         }
+
 
         public void client_recvFrom(IAsyncResult Result)
         {
             EndPoint remoteEndpoint = new IPEndPoint(IPAddress.Any, 0);
             int datalen = socket.EndReceiveFrom(Result, ref remoteEndpoint);
 
-            string result = Encoding.UTF8.GetString(rBuffer);
-            text_window.Text = text_window.Text + "\n" + result;
+            this.Invoke(new MethodInvoker(
+                 delegate ()
+                  {
+                    string result = Encoding.UTF8.GetString(rBuffer);
+                    text_window.Text = text_window.Text + "\n" + result;
+                    }
+                     ));
+
             socket.BeginReceiveFrom(
                 rBuffer,
                 0,
@@ -114,8 +147,10 @@ namespace JeonHa_talk
                 ref remoteEndpoint,
                 new AsyncCallback(client_recvFrom),
                 socket);
+                
 
         }
+   
         /*private void 초대가능_SelectedIndexChanged(object sender, EventArgs e)
         {
             참여자목록.Items.Add(초대가능.SelectedItem.ToString());
