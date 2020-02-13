@@ -14,88 +14,49 @@ namespace UDPChatServer
 {
     public partial class UDPChatServer : Form
     {
-        int port;
-        string strIP;
-        Socket socket;
+        Server_Socket Server_Socket;
+        string Server_IP;
+        int Server_Port;
 
-        IPAddress ip;
-        IPEndPoint endPoint;
-        EndPoint remoteEP;
-
-        byte[] rBuffer;
+        private delegate void Data_delegate(string Server_data);
+        
 
         public UDPChatServer()
         {
             InitializeComponent();
 
-            port = 8000;
-            strIP = "127.0.0.1";
+            //port = 8000;
+            //strIP = "127.0.0.1";
 
-            socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            //socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
-            ip = IPAddress.Parse(strIP);
-            endPoint = new IPEndPoint(ip, port);
+            //ip = IPAddress.Parse(strIP);
+            //endPoint = new IPEndPoint(ip, port);
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void Server_Connect_Click(object sender, EventArgs e)
         {
-            socket.Bind(endPoint);
-            rBuffer = new byte[1024];
-            EndPoint remoteEP = new IPEndPoint(IPAddress.Any, port);
-            socket.BeginReceiveFrom(rBuffer,
-                0,
-                rBuffer.Length, 
-                SocketFlags.None, 
-                ref remoteEP, 
-                new AsyncCallback(Server_Data_Communication), 
-                socket);
+            Server_IP = "127.0.0.1";
+            Server_Port = 8003;
+            //Server_IP = Sever_Address.Text;
+            //Server_Port = Convert.ToInt32(Port_Number.Text);
+
+            Server_Socket = new Server_Socket(this);
+            Server_Socket.Open_Socket(Server_IP, Server_Port);
+            Server_Socket.Bind_Socket();
+
+            Server_Socket.Receive_FoRA_ll();
+            
         }
 
-        public void Server_Data_Communication(IAsyncResult aresult)
+        public void Show_Msg(string Server_Text)
         {
-            remoteEP = new IPEndPoint(IPAddress.Any, port);
-            int datalen = socket.EndReceive(aresult);
-
-
-            //int length;
-
-            //length = socket.Receive(result, 0, rBuffer.Length, SocketFlags.None);
-            string result = Encoding.UTF8.GetString(rBuffer);
-
-            server_window.Text = server_window.Text + "\n" + result;
-            socket.BeginReceiveFrom(rBuffer, 0, rBuffer.Length, SocketFlags.None, ref remoteEP, new AsyncCallback(Server_Data_Communication), socket);
-            //try
-            //{
-            //    remoteEP = new IPEndPoint(IPAddress.Any, port);
-            //    int datalen = socket.EndReceive(aresult);
-
-
-            //    //int length;
-
-            //    //length = socket.Receive(result, 0, rBuffer.Length, SocketFlags.None);
-            //    string result = Encoding.UTF8.GetString(rBuffer);
-
-            //    server_window.Text = server_window.Text + "\n" + result;
-            //    socket.BeginReceiveFrom(rBuffer, 0, rBuffer.Length, SocketFlags.None, ref remoteEP, new AsyncCallback(Server_Data_Communication), socket);
-            //}
-            //catch (SocketException)
-            //{
-
-            //}
-            //catch (ObjectDisposedException)
-            //{
-
-            //}
-            //finally
-            //{
-                
-            //}
-            
-
-            
-            
+            this.Invoke(new Data_delegate(test), Server_Text);
+        }
+        public void test(string D)
+        {
+            server_window.Text = server_window.Text + "\n" + D;
         }
 
-  
     }
 }

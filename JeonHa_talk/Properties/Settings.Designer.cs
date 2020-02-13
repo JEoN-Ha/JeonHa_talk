@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace JeonHa_talk.Properties
+namespace UDPChatServer.Properties
 {
 
 

@@ -6,72 +6,76 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
 
-namespace JeonHa_talk
+namespace UDPChatServer
 {
-    class Target_info
-    {
-        public Socket socket;
-        public byte[] bufffer;
-    }
-
     class UDP_Socket
     {
-        Socket cli_socket;
-        Socket mutual_udp_socket;
-        IPEndPoint receive_EP;
-        IPEndPoint cli_EP;
-        Target_info mutual_target_info;
-        EndPoint send_Endpoint;
-        int openPort;
-
-
-        int n;
-        string data;
         
-       
 
-        public void openSocket(int port)
+        //소켓 생성
+        Socket Slave_Socket;
+        Socket Send_socket;
+
+        //종점 생성
+        IPAddress ip;
+        IPEndPoint endPoint;
+        IPEndPoint endPoint_test;
+        EndPoint remoteEP;
+
+        //byte[] sBuffer;
+        public byte[] rBuffer;
+        public int Port_Num;
+        
+        
+
+        public void Open_Socket(string strIP, int port_int)
         {
-            mutual_target_info = new Target_info();
-            mutual_udp_socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            openPort = port;
-            receive_EP = new IPEndPoint(IPAddress.Any, openPort);
-            EndPoint remote_Endpoint = new IPEndPoint(IPAddress.Any, 0);
-            mutual_udp_socket.Bind(receive_EP);
-            mutual_udp_socket.BeginReceiveFrom(
-                mutual_target_info.bufffer,
+            Port_Num = port_int;
+            Slave_Socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            //Send_socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            ip = IPAddress.Parse(strIP);
+            endPoint = new IPEndPoint(ip, port_int);
+        }
+
+        public void Connect_FoR_Client()
+        {
+            endPoint_test = new IPEndPoint(ip, 8003);
+            Slave_Socket.Connect(endPoint_test);
+        }// 접속(Connect)를 안할거면 일케 SendTo로 할수 있다하여 잠시 삭제 대기
+
+        public void Send_Msg(byte[] Cli_Msg_sBuffer)
+        {
+            // Cli_Msg_sBuffer는 Client에서 보내진 메시지를 바이트로 인코딩한것.
+            Slave_Socket.SendTo(Cli_Msg_sBuffer, endPoint_test);     //접속(Connect)를 안할거면 일케 SendTo로 할수 있다.
+        }
+
+        public void Receive_FoRA_ll()
+        {
+            //Slave_Socket.Bind(endPoint);
+            rBuffer = new byte[1024];
+            EndPoint remoteEP = new IPEndPoint(IPAddress.Any, Port_Num);
+            Slave_Socket.BeginReceiveFrom(rBuffer,
                 0,
-                mutual_target_info.bufffer.Length,
+                rBuffer.Length,
                 SocketFlags.None,
-                ref remote_Endpoint,
-                new AsyncCallback(receive_from_target_cli),
-                mutual_udp_socket
-                );
-
+                ref remoteEP,
+                new AsyncCallback(Server_Data_Communication),
+                Slave_Socket);
         }
 
-        public void receive_from_target_cli(IAsyncResult result)
+        public void Server_Data_Communication(IAsyncResult aresult)
         {
-            try
-            {
-                EndPoint remote_Endpoint = new IPEndPoint(IPAddress.Any, 0);
-                int data_length = this.mutual_udp_socket.EndReceiveFrom(result, ref remote_Endpoint);
-                // 
-            }
-            finally
-            {
-                mutual_udp_socket.BeginReceiveFrom(
-                    mutual_target_info.bufffer,
-                    0,
-                    mutual_target_info.bufffer.Length,
-                    SocketFlags.None,
-                    ref send_Endpoint,
-                    new AsyncCallback(receive_from_target_cli),
-                    mutual_udp_socket);
-            }
+            remoteEP = new IPEndPoint(IPAddress.Any, Port_Num);
+            int datalen = Slave_Socket.EndReceive(aresult);
+            string result = Encoding.UTF8.GetString(rBuffer);
 
-
+            Slave_Socket.BeginReceiveFrom(rBuffer,
+                0,
+                rBuffer.Length,
+                SocketFlags.None,
+                ref remoteEP,
+                new AsyncCallback(Server_Data_Communication),
+                Slave_Socket);
         }
-
     }
 }

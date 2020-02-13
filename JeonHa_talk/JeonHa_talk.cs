@@ -10,18 +10,16 @@ using System.Windows.Forms;
 using System.Net;
 using System.Net.Sockets;
 
-namespace JeonHa_talk
+namespace UDPChatServer
 {
     public partial class JeonHa_talk : Form
     {
+        UDP_Socket Cli_Socket;
         //UDPChatServer server_form = new UDPChatServer();
         //server_form.Show();
-        string strIP;
 
-        int port;
-        //UDP Socket 생성
-
-        Socket socket;
+        string Cli_IP;
+        int Cli_Port;
 
         //종점 생성
         IPAddress ip;
@@ -31,31 +29,46 @@ namespace JeonHa_talk
         public JeonHa_talk()
         {
             InitializeComponent();
-            
-            strIP = "127.0.0.1";
-            port = 8000;
-            //UDP Socket 생성
+            //strIP = "127.0.0.1";
+            //port = 8000;
+            ////UDP Socket 생성
 
-            socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            //socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
-            //종점 생성
-            ip = IPAddress.Parse(strIP);
-            endPoint = new IPEndPoint(ip, port);
+            ////종점 생성
+            //ip = IPAddress.Parse(strIP);
+            //endPoint = new IPEndPoint(ip, port);
         }
 
 
+        private void send_data(string my_data)
+        {
+            string msg = my_data;
 
+            byte[] sBuffer = Encoding.UTF8.GetBytes(msg);
+
+            //보내기
+            //socket.Send(sBuffer, 0, sBuffer.Length, SocketFlags.None);
+            try
+            {
+                Cli_Socket.Send_Msg(sBuffer);
+            }
+            catch (System.NullReferenceException)
+            {
+
+            }
+        }
         
 
         private void button_send_Click(object sender, EventArgs e)
         {
             text_window.Text = text_window.Text + "\n" + text_input.Text;
+            send_data(text_window.Text);
             text_input.Clear();
         }
 
         private void text_input_KeyDown(object sender, KeyEventArgs e)
         {
-            // 수-필 시작
             if (e.Shift && e.KeyCode == Keys.Enter)
             {
                 text_input.Text = text_input.Text + "\n";
@@ -64,20 +77,9 @@ namespace JeonHa_talk
             else if (e.KeyCode == Keys.Enter)
             {
                 text_window.Text = text_window.Text + "\n" + text_input.Text;
-                
-                string msg = text_input.Text;
-
-                byte[] sBuffer = Encoding.UTF8.GetBytes(msg);
-
-                //보내기
-                //socket.Send(sBuffer, 0, sBuffer.Length, SocketFlags.None);
-                socket.SendTo(sBuffer, endPoint);//접속(Connect)를 안할거면 일케 SendTo로 할수 있다.
-
+                send_data(text_input.Text);
                 text_input.Clear();
-
-                
             }
-            // 수-필 끝
         }
 
 
@@ -96,7 +98,27 @@ namespace JeonHa_talk
         private void button_connect_Click(object sender, EventArgs e)
         {
             //바인드
-            socket.Connect(endPoint);
+            
+            UDPChat_Dlg dlg = new UDPChat_Dlg();
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                Cli_Socket = new UDP_Socket();
+                Cli_IP = dlg.IP_Address;
+                Cli_Port = dlg.Port_num;
+                Cli_Socket.Open_Socket(Cli_IP, Cli_Port);
+
+                Cli_Socket.Connect_FoR_Client();
+                Cli_Socket.Receive_FoRA_ll();
+                string receive_msg = Encoding.UTF8.GetString(Cli_Socket.rBuffer);
+                text_window.Text = text_window.Text + "\n" + receive_msg;
+            }
+            else
+            {
+                //Cli_Socket.close_Socket();
+            }
+
+
+
         }
 
        

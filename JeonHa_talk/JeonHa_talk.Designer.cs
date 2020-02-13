@@ -1,4 +1,4 @@
-﻿namespace JeonHa_talk
+﻿namespace UDPChatServer
 {
     partial class JeonHa_talk
     {

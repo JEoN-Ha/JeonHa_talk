@@ -54,6 +54,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Server_Socket.cs" />
     <EmbeddedResource Include="UDPChatServer.resx">
       <DependentUpon>UDPChatServer.cs</DependentUpon>
     </EmbeddedResource>

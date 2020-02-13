@@ -82,7 +82,7 @@
             this.Server_Connect.TabIndex = 5;
             this.Server_Connect.Text = "연결";
             this.Server_Connect.UseVisualStyleBackColor = true;
-            this.Server_Connect.Click += new System.EventHandler(this.button1_Click);
+            this.Server_Connect.Click += new System.EventHandler(this.Server_Connect_Click);
             // 
             // server_window
             // 
