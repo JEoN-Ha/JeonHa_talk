@@ -20,7 +20,8 @@ namespace JeonHa_talk
 
         Socket socket;
         IPAddress ip;
-        IPEndPoint endPoint;
+        IPEndPoint localEP;
+        IPEndPoint remoteEP;
 
         private delegate void dataDelegate(string cData);
 
@@ -35,7 +36,8 @@ namespace JeonHa_talk
 
             //종점 생성
             ip = IPAddress.Parse(strIP);
-            endPoint = new IPEndPoint(ip, port);
+            localEP = new IPEndPoint(ip, port);
+            remoteEP = new IPEndPoint(IPAddress.Loopback, port);
         }
 
         private void button_send_Click(object sender, EventArgs e)
@@ -60,13 +62,16 @@ namespace JeonHa_talk
 
                 //보내기
                 //socket.Send(sBuffer, 0, sBuffer.Length, SocketFlags.None);
-                socket.SendTo(sBuffer, endPoint);//접속(Connect)를 안할거면 일케 SendTo로 할수 있다.
+                socket.SendTo(sBuffer, localEP);//접속(Connect)를 안할거면 일케 SendTo로 할수 있다.
                 text_input.Clear();
 
                 EndPoint remoteEndpoint = new IPEndPoint(ip, 0);
                 server_Buffer = new byte[2048];
-
+                socket.ReceiveFrom(server_Buffer, ref remoteEndpoint);
+                string result = Encoding.UTF8.GetString(server_Buffer);
+                this.Invoke(new dataDelegate(delegatefunction), result);
                 //server에서 데이터 받기
+                /*
                 socket.BeginReceiveFrom(                        
                     server_Buffer,
                     0,
@@ -75,11 +80,11 @@ namespace JeonHa_talk
                     ref remoteEndpoint,
                     new AsyncCallback(client_recvfrom),
                     socket
-                    );
+                    );*/
             }
             
         }
-
+        /*
         public void client_recvfrom(IAsyncResult Result)
         {
             EndPoint remoteEndpoint = new IPEndPoint(IPAddress.Any, 0);
@@ -101,6 +106,7 @@ namespace JeonHa_talk
                 socket
                 );
         }
+        */
         private void delegatefunction(string sData)
         {
             text_window.Text = text_window.Text + "\n" + sData;
@@ -121,7 +127,7 @@ namespace JeonHa_talk
         private void button_connect_Click(object sender, EventArgs e)
         {
             //바인드
-            socket.Connect(endPoint);
+            socket.Connect(localEP);
         }
 
         /*private void 초대가능_SelectedIndexChanged(object sender, EventArgs e)

@@ -18,7 +18,7 @@ namespace UDPChatServer
     public partial class UDPChatServer : Form
     {
         Socket socket;
-        IPEndPoint endPoint;
+        IPEndPoint localEP;
         IPEndPoint remoteEP;
         IPAddress ip;
 
@@ -37,13 +37,13 @@ namespace UDPChatServer
             socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
             ip = IPAddress.Parse(strIP);
-            endPoint = new IPEndPoint(ip, port);
-            remoteEP = new IPEndPoint(IPAddress.None, port);
+            localEP = new IPEndPoint(ip, port);
+            remoteEP = new IPEndPoint(IPAddress.Any, port);
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            socket.Bind(endPoint);
+            socket.Bind(localEP);
             rBuffer = new byte[1024];
            
             EndPoint remoteEndpoint = new IPEndPoint(IPAddress.Any, 0);
