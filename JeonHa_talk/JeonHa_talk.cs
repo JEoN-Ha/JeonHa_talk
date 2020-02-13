@@ -22,6 +22,8 @@ namespace JeonHa_talk
         IPAddress ip;
         IPEndPoint endPoint;
 
+        private delegate void dataDelegate(string cData);
+
         public JeonHa_talk()
         {
             InitializeComponent();
@@ -51,10 +53,9 @@ namespace JeonHa_talk
             }
             else if (e.KeyCode == Keys.Enter)
             {
-                text_window.Text = text_window.Text + "\n" + text_input.Text;
+                //text_window.Text = text_window.Text + "\n" + text_input.Text;
                 
                 string msg = text_input.Text;
-
                 byte[] sBuffer = Encoding.UTF8.GetBytes(msg);
 
                 //보내기
@@ -63,7 +64,7 @@ namespace JeonHa_talk
                 text_input.Clear();
 
                 EndPoint remoteEndpoint = new IPEndPoint(ip, 0);
-                server_Buffer = new byte[1024];
+                server_Buffer = new byte[2048];
 
                 //server에서 데이터 받기
                 socket.BeginReceiveFrom(                        
@@ -84,7 +85,12 @@ namespace JeonHa_talk
             EndPoint remoteEndpoint = new IPEndPoint(IPAddress.Any, 0);
             int datalen = socket.EndReceiveFrom(Result, ref remoteEndpoint);
             string result = Encoding.UTF8.GetString(server_Buffer);
-            text_window.Text = text_window.Text + "\n" + result;
+
+            this.Invoke(new dataDelegate(delegatefunction), result);
+
+            //byte[] server_Buffer = new byte[1024];
+    
+            //받은 메세지 출력
             socket.BeginReceiveFrom(
                 server_Buffer,
                 0,
@@ -94,6 +100,10 @@ namespace JeonHa_talk
                 new AsyncCallback(client_recvfrom),
                 socket
                 );
+        }
+        private void delegatefunction(string sData)
+        {
+            text_window.Text = text_window.Text + "\n" + sData;
         }
 
         private void JeonHa_talk_Load(object sender, EventArgs e)

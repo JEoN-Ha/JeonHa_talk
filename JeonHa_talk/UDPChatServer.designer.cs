@@ -32,18 +32,17 @@
             this.label2 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.Port_number = new System.Windows.Forms.TextBox();
-            this.Server_window = new System.Windows.Forms.RichTextBox();
             this.server_connect = new System.Windows.Forms.Button();
+            this.Server_window = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("굴림", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.label1.Location = new System.Drawing.Point(50, 34);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label1.Location = new System.Drawing.Point(35, 23);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(114, 24);
+            this.label1.Size = new System.Drawing.Size(77, 16);
             this.label1.TabIndex = 0;
             this.label1.Text = "서버 주소";
             // 
@@ -51,65 +50,56 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("굴림", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.label2.Location = new System.Drawing.Point(530, 37);
-            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label2.Location = new System.Drawing.Point(380, 26);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(114, 24);
+            this.label2.Size = new System.Drawing.Size(77, 16);
             this.label2.TabIndex = 1;
             this.label2.Text = "포트 번호";
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(178, 34);
-            this.textBox1.Margin = new System.Windows.Forms.Padding(4);
+            this.textBox1.Location = new System.Drawing.Point(125, 23);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(343, 28);
+            this.textBox1.Size = new System.Drawing.Size(241, 21);
             this.textBox1.TabIndex = 2;
             // 
             // Port_number
             // 
-            this.Port_number.Location = new System.Drawing.Point(658, 34);
-            this.Port_number.Margin = new System.Windows.Forms.Padding(4);
+            this.Port_number.Location = new System.Drawing.Point(470, 24);
             this.Port_number.Name = "Port_number";
-            this.Port_number.Size = new System.Drawing.Size(170, 28);
+            this.Port_number.Size = new System.Drawing.Size(96, 21);
             this.Port_number.TabIndex = 3;
-            
-            // 
-            // Server_window
-            // 
-            this.Server_window.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.Server_window.ForeColor = System.Drawing.Color.White;
-            this.Server_window.Location = new System.Drawing.Point(15, 95);
-            this.Server_window.Margin = new System.Windows.Forms.Padding(4);
-            this.Server_window.Name = "Server_window";
-            this.Server_window.Size = new System.Drawing.Size(950, 539);
-            this.Server_window.TabIndex = 4;
-            this.Server_window.Text = "";
             // 
             // server_connect
             // 
-            this.server_connect.Location = new System.Drawing.Point(848, 32);
-            this.server_connect.Margin = new System.Windows.Forms.Padding(4);
+            this.server_connect.Location = new System.Drawing.Point(607, 23);
             this.server_connect.Name = "server_connect";
-            this.server_connect.Size = new System.Drawing.Size(119, 36);
+            this.server_connect.Size = new System.Drawing.Size(79, 24);
             this.server_connect.TabIndex = 5;
             this.server_connect.Text = "연결";
             this.server_connect.UseVisualStyleBackColor = true;
             this.server_connect.Click += new System.EventHandler(this.server_connect_Click);
             // 
+            // Server_window
+            // 
+            this.Server_window.Location = new System.Drawing.Point(38, 67);
+            this.Server_window.Multiline = true;
+            this.Server_window.Name = "Server_window";
+            this.Server_window.Size = new System.Drawing.Size(648, 404);
+            this.Server_window.TabIndex = 6;
+            // 
             // UDPChatServer
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 18F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.ClientSize = new System.Drawing.Size(981, 658);
-            this.Controls.Add(this.server_connect);
+            this.ClientSize = new System.Drawing.Size(719, 506);
             this.Controls.Add(this.Server_window);
+            this.Controls.Add(this.server_connect);
             this.Controls.Add(this.Port_number);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "UDPChatServer";
             this.Text = "UDPChatServer";
             this.ResumeLayout(false);
@@ -123,8 +113,8 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.TextBox Port_number;
-        private System.Windows.Forms.RichTextBox Server_window;
         private System.Windows.Forms.Button server_connect;
+        private System.Windows.Forms.TextBox Server_window;
     }
 }
 

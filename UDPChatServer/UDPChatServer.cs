@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
+
 
 
 namespace UDPChatServer
@@ -17,12 +19,15 @@ namespace UDPChatServer
     {
         Socket socket;
         IPEndPoint endPoint;
+        IPEndPoint remoteEP;
         IPAddress ip;
 
         int port;
         string strIP;
         byte[] rBuffer;
-        int length;
+        byte[] sBuffer;
+
+        private delegate void dataDelegate(string sData);
   
         public UDPChatServer()
         {
@@ -33,6 +38,7 @@ namespace UDPChatServer
 
             ip = IPAddress.Parse(strIP);
             endPoint = new IPEndPoint(ip, port);
+            remoteEP = new IPEndPoint(IPAddress.None, port);
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -49,17 +55,23 @@ namespace UDPChatServer
                 ref remoteEndpoint,
                 new AsyncCallback(server_recvfrom),
                 socket
-                );           
+                );
         }
 
         public void server_recvfrom(IAsyncResult Result)
         {
             EndPoint remoteEndpoint = new IPEndPoint(IPAddress.Any, 0);
             int datalen = socket.EndReceiveFrom(Result, ref remoteEndpoint);
-            //length = socket.Receive(rBuffer, 0, rBuffer.Length, SocketFlags.None);
             string result = Encoding.UTF8.GetString(rBuffer);
-            server_window.Text = server_window.Text + "\n" + result;
-            socket.SendTo(rBuffer, endPoint);       // Client로 받은 데이터 전송
+
+            //server에서 받은 데이터 client로 전송
+            byte[] cBuffer = Encoding.UTF8.GetBytes(result);
+            
+            socket.SendTo(cBuffer, remoteEndpoint);
+
+            //데이터 출력
+            this.Invoke(new dataDelegate(delegatefunction), result);
+            //byte[] rBuffer = new byte[1024];
             socket.BeginReceiveFrom(
                 rBuffer,
                 0,
@@ -71,5 +83,9 @@ namespace UDPChatServer
                 );
         }
 
+        private void delegatefunction(string sData)
+        {
+            server_window.Text = server_window.Text + "\n" + sData;
+        }
     }
 }

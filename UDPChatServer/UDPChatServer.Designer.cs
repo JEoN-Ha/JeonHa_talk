@@ -120,6 +120,7 @@
         private System.Windows.Forms.TextBox Port_Number;
         private System.Windows.Forms.Button Server_Connect;
         private System.Windows.Forms.TextBox server_window;
+        
     }
 }
 
