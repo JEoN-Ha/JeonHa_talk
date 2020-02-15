@@ -21,11 +21,6 @@ namespace UDPChatServer
         string Cli_IP;
         int Cli_Port;
 
-        //종점 생성
-        IPAddress ip;
-        IPEndPoint endPoint;
-
-
         public JeonHa_talk()
         {
             InitializeComponent();
@@ -96,6 +91,11 @@ namespace UDPChatServer
         }
 
         private void button_connect_Click(object sender, EventArgs e)
+
+
+
+
+
         {
             //바인드
             
@@ -105,7 +105,8 @@ namespace UDPChatServer
                 Cli_Socket = new UDP_Socket();
                 Cli_IP = dlg.IP_Address;
                 Cli_Port = dlg.Port_num;
-                Cli_Socket.Open_Socket(Cli_IP, Cli_Port, 8000);
+                int Server_port = 8000;
+                Cli_Socket.Open_Socket(Cli_IP, 8000, Cli_Port);
 
                 Cli_Socket.Connect_FoR_Client();
                 Cli_Socket.Receive_FoRA_ll();

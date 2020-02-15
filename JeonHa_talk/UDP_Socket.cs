@@ -14,7 +14,6 @@ namespace UDPChatServer
 
         //소켓 생성
         Socket Slave_Socket;
-        Socket Send_socket;
 
         //종점 생성
         IPAddress ip;
@@ -39,6 +38,10 @@ namespace UDPChatServer
             endPoint_Client = new IPEndPoint(ip, Port_Client);
             endPoint_Server = new IPEndPoint(ip, Port_Server);
         }
+        public void Bind_Socket()
+        {
+            Slave_Socket.Bind(endPoint_Server);
+        }
 
         public void Connect_FoR_Client()
         {
@@ -48,7 +51,7 @@ namespace UDPChatServer
         public void Send_Msg(byte[] Cli_Msg_sBuffer)
         {
             // Cli_Msg_sBuffer는 Client에서 보내진 메시지를 바이트로 인코딩한것.
-            Slave_Socket.SendTo(Cli_Msg_sBuffer, endPoint_Client);     //접속(Connect)를 안할거면 일케 SendTo로 할수 있다.
+            Slave_Socket.SendTo(Cli_Msg_sBuffer, endPoint_Server);     //접속(Connect)를 안할거면 일케 SendTo로 할수 있다.
         }
 
         public void Receive_FoRA_ll()

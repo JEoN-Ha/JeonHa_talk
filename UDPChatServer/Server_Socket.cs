@@ -56,7 +56,7 @@ namespace UDPChatServer
         public void Send_Msg(byte[] Cli_Msg_sBuffer)
         {
             // Cli_Msg_sBuffer는 Client에서 보내진 메시지를 바이트로 인코딩한것.
-            Slave_Socket.SendTo(Cli_Msg_sBuffer, endPoint_Server);     //접속(Connect)를 안할거면 일케 SendTo로 할수 있다.
+            Slave_Socket.SendTo(Cli_Msg_sBuffer, endPoint_Client);     //접속(Connect)를 안할거면 일케 SendTo로 할수 있다.
         }
 
         public void Receive_FoRA_ll()
@@ -81,17 +81,24 @@ namespace UDPChatServer
             byte[] Server_Buffer = Encoding.UTF8.GetBytes(result);
 
             Send_Msg(Server_Buffer);
-            Slave_Socket.SendTo(Server_Buffer, endPoint_Server); ///client port number로 바꿔야됨
+            //Slave_Socket.SendTo(Server_Buffer, endPoint_Server); ///client port number로 바꿔야됨
 
             Server_Form.Show_Msg(result);
 
-            Slave_Socket.BeginReceiveFrom(rBuffer,
-                0,
-                rBuffer.Length,
-                SocketFlags.None,
-                ref remoteEP,
-                new AsyncCallback(Server_Data_Communication),
-                Slave_Socket);
+            try
+            {
+                Slave_Socket.BeginReceiveFrom(rBuffer,
+                   0,
+                   rBuffer.Length,
+                   SocketFlags.None,
+                   ref remoteEP,
+                   new AsyncCallback(Server_Data_Communication),
+                   Slave_Socket);
+            }
+            catch(SocketException)
+            {
+                Server_Form.Show_Msg("예외가 발생하였습니다");
+            }
         }
 
         public string test()
