@@ -105,7 +105,7 @@ namespace UDPChatServer
                 Cli_Socket = new UDP_Socket();
                 Cli_IP = dlg.IP_Address;
                 Cli_Port = dlg.Port_num;
-                Cli_Socket.Open_Socket(Cli_IP, Cli_Port);
+                Cli_Socket.Open_Socket(Cli_IP, Cli_Port, 8000);
 
                 Cli_Socket.Connect_FoR_Client();
                 Cli_Socket.Receive_FoRA_ll();

@@ -31,7 +31,7 @@ namespace UDPChatServer
         private void server_connect_Click(object sender, EventArgs e)
         {
             IP_Address = "127.0.0.1";
-            Port_num = 8002;
+            Port_num = 7000;
             //IP_Address = Sever_Address.Text;
             //Port_num = Convert.ToInt32(Port_number.Text);
             if (Connect_state == false)

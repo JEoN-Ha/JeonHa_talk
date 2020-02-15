@@ -37,12 +37,13 @@ namespace UDPChatServer
         private void Server_Connect_Click(object sender, EventArgs e)
         {
             Server_IP = "127.0.0.1";
-            Server_Port = 8003;
+            Server_Port = 8000;
+            int Client_Port = 7000;
             //Server_IP = Sever_Address.Text;
             //Server_Port = Convert.ToInt32(Port_Number.Text);
 
             Server_Socket = new Server_Socket(this);
-            Server_Socket.Open_Socket(Server_IP, Server_Port);
+            Server_Socket.Open_Socket(Server_IP, Server_Port, Client_Port);
             Server_Socket.Bind_Socket();
 
             Server_Socket.Receive_FoRA_ll();
@@ -57,6 +58,5 @@ namespace UDPChatServer
         {
             server_window.Text = server_window.Text + "\n" + D;
         }
-
     }
 }
